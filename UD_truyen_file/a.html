@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload with Signature</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #eef2f3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+        #uploadForm {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 400px;
+            text-align: center;
+        }
+        h1 {
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        input[type="file"],
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            transition: border-color 0.3s;
+        }
+        input[type="file"]:focus,
+        input[type="text"]:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .message {
+            margin-top: 15px;
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <form id="uploadForm">
+        <h1>Upload File with Signature</h1>
+        <input type="file" id="fileInput" required>
+        <input type="text" id="signatureInput" placeholder="Enter signature" required>
+        <button type="submit">Upload</button>
+        <div class="message" id="message"></div>
+    </form>
+
+    <script>
+        document.getElementById('uploadForm').onsubmit = async function(event) {
+            event.preventDefault();
+            const fileInput = document.getElementById('fileInput');
+            const signatureInput = document.getElementById('signatureInput');
+            const messageDiv = document.getElementById('message');
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            formData.append('signature', signatureInput.value);
+
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+                messageDiv.textContent = result.message;
+                messageDiv.style.color = result.message.includes('successfully') ? '#28a745' : '#dc3545';
+            } catch (error) {
+                messageDiv.textContent = 'An error occurred: ' + error.message;
+                messageDiv.style.color = '#dc3545';
+            }
+        }
+    </script>
+</body>
+</html>
